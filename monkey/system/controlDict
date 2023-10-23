@@ -1,0 +1,104 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   100;
+
+purgeWrite      5;
+
+writeFormat     binary;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    // #includeFunc   yPlus
+
+
+    // turbulenceFields1
+    // {
+    //     // Mandatory entries (unmodifiable)
+    //     type            turbulenceFields;
+    //     libs            (fieldFunctionObjects);
+
+    //     // Either field or fields entries
+    //     fields          (L I);
+
+    //     // Optional (inherited) entries
+    //     writeControl    writeTime;
+    // }
+
+    forceCoeffs
+    {
+        type            forceCoeffs;
+        libs            ("libforces.so");
+        writeControl    timeStep;
+        writeInterval   100;
+
+        patches
+        (
+            suzanne
+        );
+
+        log         true;
+        rho         rhoInf;
+        rhoInf      1;
+        CofR        (0 0 0); // Centro de rotación
+        liftDir     (0 1 0); //-sin AOA, cos AOA, 0 AOA in RAD
+        dragDir     (1 0 0); // cos AOA, sin AOA, 0 AOA in RAD
+        pitchAxis   (0 0 1);
+        magUInf     0.02; 
+        lRef        0.6;
+        Aref        0.16207;
+    }
+
+    forces
+    {
+        type            forces;
+        libs            ("libforces.so");
+        patches         (suzanne);
+        rho             rhoInf;
+        rhoInf          1;
+        log             on;
+        writeControl    timeStep;
+        writeInterval   100;
+        CofR            (0 0 0);
+    }
+}
+
+
+// ************************************************************************* //

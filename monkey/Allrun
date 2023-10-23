@@ -1,0 +1,20 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+# runParallel potentialFoam
+
+# runApplication $(getApplication)
+
+runApplication decomposePar
+
+runParallel potentialFoam -writephi
+
+runParallel $(getApplication)
+
+runApplication reconstructPar
+
+# Output message
+echo
+echo Case ended
