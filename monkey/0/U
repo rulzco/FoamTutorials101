@@ -1,24 +1,22 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2212                                  |
+|  \\    /   O peration     | Version:  v2212                                 |
 |   \\  /    A nd           | Website:  www.openfoam.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
-    format      binary;
-    arch        "LSB;label=32;scalar=64";
+    format      ascii;
     class       volVectorField;
-    location    "0";
     object      U;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform (0 0 0);
+internalField   uniform (1e-8 0 0);
 
 boundaryField
 {
@@ -27,17 +25,20 @@ boundaryField
         type            fixedValue;
         value           uniform (0.02 0 0);
     }
+
     outlet
     {
         type            zeroGradient;
     }
-    airSlip
-    {
-        type            slip;
-    }
+
     suzanne
     {
         type            noSlip;
+    }
+
+    airSlip
+    {
+        type            slip;
     }
 }
 

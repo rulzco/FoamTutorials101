@@ -1,0 +1,74 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      changeDictionaryDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// boundary
+// {
+//     "heater_to_.*"
+//     {
+//         type            wall;
+//         inGroups        (coupleGroup);
+//     }
+//     inlet
+//     {
+//         type            patch;
+//     }
+//     outlet
+//     {
+//         type            patch;
+//     }
+// }
+
+T
+{
+    internalField   uniform 300;
+
+    boundaryField
+    {
+        "inlet|outlet|top"
+        {
+            type            zeroGradient;
+            value           uniform 300;
+        }
+        "heater_to_.*"
+        {
+            type            compressible::turbulentTemperatureRadCoupledMixed;
+            Tnbr            T;
+            kappaMethod     solidThermo;
+            value           uniform 300;
+        }
+        "front|back"
+        {
+            type            empty;
+        }
+        // heater_to_leftSolid
+        // {
+        //     type            compressible::turbulentTemperatureRadCoupledMixed;
+        //     Tnbr            T;
+        //     kappaMethod     solidThermo;
+        //     thicknessLayers (1e-3);
+        //     kappaLayers     (5e-4);
+        //     value           uniform 300;
+        // }
+        bot
+        {
+            type            fixedValue;
+            value           uniform 800;
+        }
+    }
+}
+
+
+// ************************************************************************* //

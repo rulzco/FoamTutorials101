@@ -9,37 +9,33 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      nuTilda;
+    class       dictionary;
+    object      fvSchemes;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -1 0 0 0 0];
-
-internalField   uniform 0;
-
-boundaryField
+ddtSchemes
 {
-    inlet
-    {
-        type            fixedValue;
-        value           uniform 0;
-    }
+}
 
-    outlet
-    {
-        type            zeroGradient;
-    }
+gradSchemes
+{
+}
 
-    suzanne
-    {
-        type            zeroGradient;
-    }
+divSchemes
+{
+}
 
-    airSlip
-    {
-        type            slip;
-    }
+laplacianSchemes
+{
+}
+
+interpolationSchemes
+{
+}
+
+snGradSchemes
+{
 }
 
 

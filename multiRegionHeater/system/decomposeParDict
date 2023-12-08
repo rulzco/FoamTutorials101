@@ -9,38 +9,41 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      nuTilda;
+    class       dictionary;
+    object      decomposeParDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -1 0 0 0 0];
+numberOfSubdomains  2;
 
-internalField   uniform 0;
+method              scotch;
 
-boundaryField
+regions
 {
-    inlet
+    heater
     {
-        type            fixedValue;
-        value           uniform 0;
-    }
+        numberOfSubdomains  1;
+        method      simple; // none;
 
-    outlet
-    {
-        type            zeroGradient;
-    }
-
-    suzanne
-    {
-        type            zeroGradient;
-    }
-
-    airSlip
-    {
-        type            slip;
+        coeffs
+        {
+            n       (1 1 1);
+        }
     }
 }
+
+
+/*
+constraints
+{
+    //- Keep owner and neighbour on same processor for faces in zones:
+    faces
+    {
+        type    preserveFaceZones;
+        zones   (heater solid1 solid3);
+    }
+}
+*/
 
 
 // ************************************************************************* //

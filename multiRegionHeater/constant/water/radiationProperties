@@ -9,38 +9,14 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      nuTilda;
+    class       dictionary;
+    object      radiationProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -1 0 0 0 0];
+radiation       off;
 
-internalField   uniform 0;
-
-boundaryField
-{
-    inlet
-    {
-        type            fixedValue;
-        value           uniform 0;
-    }
-
-    outlet
-    {
-        type            zeroGradient;
-    }
-
-    suzanne
-    {
-        type            zeroGradient;
-    }
-
-    airSlip
-    {
-        type            slip;
-    }
-}
+radiationModel  none;
 
 
 // ************************************************************************* //

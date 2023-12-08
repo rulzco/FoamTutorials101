@@ -9,36 +9,41 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      nuTilda;
+    class       dictionary;
+    object      thermophysicalProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -1 0 0 0 0];
-
-internalField   uniform 0;
-
-boundaryField
+thermoType
 {
-    inlet
-    {
-        type            fixedValue;
-        value           uniform 0;
-    }
+    type            heRhoThermo;
+    mixture         pureMixture;
+    transport       const;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
 
-    outlet
+mixture
+{
+    specie
     {
-        type            zeroGradient;
+        molWeight       18;
     }
-
-    suzanne
+    equationOfState
     {
-        type            zeroGradient;
+        rho             1000;
     }
-
-    airSlip
+    thermodynamics
     {
-        type            slip;
+        Cp              4181;
+        Hf              0;
+    }
+    transport
+    {
+        mu              959e-6;
+        Pr              6.62;
     }
 }
 

@@ -1,0 +1,152 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+    // Heater
+    {
+        name    heaterCellSet;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        box     (-0.01001 0 -0.2) (1.1 0.10001 0.2);
+    }
+    // {
+    //     name    heaterCellSet;
+    //     type    cellSet;
+    //     action  add;
+    //     source  boxToCell;
+    //     box     (-0.01001 -100 -0.01001) (0.01001 0.00999 0.01001);
+    // }
+    {
+        name    heater;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     heaterCellSet;
+    }
+
+
+    // Passive
+    {
+        name    passiveCellSet;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        box     (-0.01001 0.39999 -0.2) (1.1 0.50001 0.2);
+    }
+    // {
+    //     name    heaterCellSet;
+    //     type    cellSet;
+    //     action  add;
+    //     source  boxToCell;
+    //     box     (-0.01001 -100 -0.01001) (0.01001 0.00999 0.01001);
+    // }
+    {
+        name    passive;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     passiveCellSet;
+    }
+
+
+
+    // {
+    //     name    heaterCellSet;
+    //     type    cellSet;
+    //     action  new;
+    //     source  boxToCell;
+    //     box     (-0.01001 0 -100) (0.01001 0.00999 100);
+    // }
+    // {
+    //     name    heaterCellSet;
+    //     type    cellSet;
+    //     action  add;
+    //     source  boxToCell;
+    //     box     (-0.01001 -100 -0.01001) (0.01001 0.00999 0.01001);
+    // }
+    // {
+    //     name    heater;
+    //     type    cellZoneSet;
+    //     action  new;
+    //     source  setToCellZone;
+    //     set     heaterCellSet;
+    // }
+
+    
+    // Air
+    // {
+    //     name    topAirCellSet;
+    //     type    cellSet;
+    //     action  new;
+    //     source  boxToCell;
+    //     box     (-100 0.00999 -100) (100 100 100);
+    // }
+    // {
+    //     name    topAir;
+    //     type    cellZoneSet;
+    //     action  new;
+    //     source  setToCellZone;
+    //     set     topAirCellSet;
+    // }
+
+
+    // bottomWater is all the other cells
+    {
+        name    waterCellSet;
+        type    cellSet;
+        action  new;
+        source  cellToCell;
+        set     heaterCellSet;
+    }
+    {
+        name    waterCellSet;
+        type    cellSet;
+        action  add;
+        source  cellToCell;
+        set     passiveCellSet;
+    }
+    // {
+    //     name    bottomWaterCellSet;
+    //     type    cellSet;
+    //     action  add;
+    //     source  cellToCell;
+    //     set     rightSolidCellSet;
+    // }
+    // {
+    //     name    bottomWaterCellSet;
+    //     type    cellSet;
+    //     action  add;
+    //     source  cellToCell;
+    //     set     topAirCellSet;
+    // }
+    {
+        name    waterCellSet;
+        type    cellSet;
+        action  invert;
+    }
+    {
+        name    water;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     waterCellSet;
+    }
+);
+
+
+// ************************************************************************* //

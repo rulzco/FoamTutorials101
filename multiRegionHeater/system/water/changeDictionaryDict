@@ -1,0 +1,186 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      changeDictionaryDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+U
+{
+    internalField   uniform (0.001 0 0);
+
+    boundaryField
+    {
+        inlet
+        {
+            type            fixedValue;
+            value           uniform (0.001 0 0);
+        }
+        outlet
+        {
+            type            inletOutlet;
+            inletValue      uniform (0 0 0);
+        }
+        "water_to_.*"
+        {
+            type            fixedValue;
+            value           uniform (0 0 0);
+        }
+
+        "front|back"
+        {
+            type            empty;
+        }
+    }
+}
+
+T
+{
+    internalField   uniform 300;
+
+    boundaryField
+    {
+        inlet
+        {
+            type            fixedValue;
+            value           uniform 300;
+        }
+
+        outlet
+        {
+            type            inletOutlet;
+            inletValue      uniform 300;
+        }
+        "water_to_.*"
+        {
+            type            compressible::turbulentTemperatureRadCoupledMixed;
+            Tnbr            T;
+            kappaMethod     fluidThermo;
+            value           uniform 300;
+        }
+
+        "front|back"
+        {
+            type            empty;
+        }
+    }
+}
+
+epsilon
+{
+    internalField   uniform 0.01;
+
+    boundaryField
+    {
+        "water_to_.*"
+        {
+            type            epsilonWallFunction;
+            value           uniform 0.01;
+        }
+        inlet
+        {
+            type            fixedValue;
+            value           uniform 0.01;
+        }
+        outlet
+        {
+            type            inletOutlet;
+            inletValue      uniform 0.01;
+        }
+        "front|back"
+        {
+            type            empty;
+        }
+    }
+}
+
+k
+{
+    internalField   uniform 0.1;
+
+    boundaryField
+    {
+        "water_to_.*"
+        {
+            type            kqRWallFunction;
+            value           uniform 0.1;
+        }
+        inlet
+        {
+            type            inletOutlet;
+            inletValue      uniform 0.1;
+        }
+        outlet
+        {
+            type            zeroGradient;
+            value           uniform 0.1;
+        }
+        "front|back"
+        {
+            type            empty;
+        }
+    }
+}
+
+p_rgh
+{
+    internalField   uniform 0;
+
+    boundaryField
+    {
+        "water_to_.*"
+        {
+            type            fixedFluxPressure;
+            value           uniform 0;
+        }
+        inlet
+        {
+            type            zeroGradient;
+            value           uniform 0;
+        }
+        outlet
+        {
+            type            fixedValue;
+            value           uniform 0;
+        }
+        "front|back"
+        {
+            type            empty;
+        }
+    }
+}
+
+p
+{
+    internalField   uniform 0;
+
+    boundaryField
+    {
+        "water_to_.*"
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        "inlet|outlet"
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        "front|back"
+        {
+            type            empty;
+        }
+    }
+}
+
+
+// ************************************************************************* //

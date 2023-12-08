@@ -10,35 +10,25 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      nuTilda;
+    object      p_rgh;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 2 -1 0 0 0 0];
+dimensions      [1 -1 -2 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform 1e5;
 
 boundaryField
 {
-    inlet
+    ".*"
     {
-        type            fixedValue;
-        value           uniform 0;
+        type            calculated;
+        value           $internalField;
     }
 
-    outlet
+    "front|back"
     {
-        type            zeroGradient;
-    }
-
-    suzanne
-    {
-        type            zeroGradient;
-    }
-
-    airSlip
-    {
-        type            slip;
+        type            empty;
     }
 }
 
