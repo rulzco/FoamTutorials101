@@ -1,0 +1,165 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+scale   1.0;
+
+xmin -1.651;
+xmax 0.635;
+hStep 0.0127;
+hOut 0.1143;
+// hIn #calc "$hOut-$hSept";
+
+x0 0.0;
+x1 $xmax;
+x2 $xmax;
+x3 $xmax;
+x4 0.0;
+x5 $xmin;
+x6 $xmin;
+x7 0.0;
+
+y0 0.0;
+y1 0.0;
+y2 $hStep;
+y3 $hOut;
+y4 $hOut;
+y5 $hOut;
+y6 $hStep;
+y7 $hStep;
+
+z0 -0.1;
+z1 0.1;
+
+xCellsRHS 53;
+xCellsLHS 63;
+yCellsIn 22;
+yCellsStep 11;
+zCells 1;
+
+vertices
+(
+    ($x0 $y0 $z0) //0
+    ($x1 $y1 $z0) //1
+    ($x2 $y2 $z0) //2
+    ($x3 $y3 $z0) //3
+    ($x4 $y4 $z0) //4
+    ($x5 $y5 $z0) //5
+    ($x6 $y6 $z0) //6
+    ($x7 $y7 $z0) //7
+
+    ($x0 $y0 $z1) //8
+    ($x1 $y1 $z1) //9
+    ($x2 $y2 $z1) //10
+    ($x3 $y3 $z1) //11
+    ($x4 $y4 $z1) //12
+    ($x5 $y5 $z1) //13
+    ($x6 $y6 $z1) //14
+    ($x7 $y7 $z1) //15
+);
+
+ySpacing ((0.5 0.5 46)(0.5 0.5 0.02173));
+ySpacingStep ((0.5 0.5 6.1917)(0.5 0.5 0.1613));
+
+blocks
+(
+    // uniforms
+    hex (0 1 2 7 8 9 10 15) ($xCellsRHS $yCellsStep $zCells) simpleGrading (142 $ySpacingStep 1)// 0
+    hex (7 2 3 4 15 10 11 12) ($xCellsRHS $yCellsIn $zCells) simpleGrading (142 $ySpacing 1)// 1
+    hex (6 7 4 5 14 15 12 13) ($xCellsLHS $yCellsIn $zCells) simpleGrading (0.0027 $ySpacing 1)// 2
+);
+
+edges
+(
+);
+
+boundary
+(
+    inlet//nombre
+    {
+        type patch;//tipo
+        faces
+        (
+            (6 14 13 5)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (1 2 10 9)
+            (2 3 11 10)
+        );
+    }
+    // lowerWallStartup
+    // {
+    //     type symmetryPlane;
+    //     faces
+    //     (
+    //         (13 14 1 0)
+    //     );
+    // }
+    // upperWallStartup
+    // {
+    //     type symmetryPlane;
+    //     faces
+    //     (
+    //         (25 12 11 24)
+    //     );
+    // }
+    upperWall
+    {
+        type wall;
+        faces
+        (
+            (5 13 12 4)
+            (4 12 11 3)
+        );
+    }
+    lowerWall
+    {
+        type wall;
+        faces
+        (
+            (6 14 15 7)
+            (7 15 8 0)
+            (0 8 9 1)
+        );
+    }
+    front
+    {
+        type empty;
+        faces
+        (
+            (8 9 10 15)
+            (15 10 11 12)
+            (14 15 12 13)
+        );
+    }
+    back
+    {
+        type empty;
+        faces
+        (
+            (0 1 2 7)
+            (7 2 3 4)
+            (6 7 4 5)
+        );
+    }
+);
+
+
+// ************************************************************************* //
