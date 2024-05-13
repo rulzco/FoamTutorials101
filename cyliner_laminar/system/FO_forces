@@ -1,0 +1,13 @@
+type                forces;
+libs  ("libforces.so");
+writeControl       timeStep;
+writeInterval      20;
+
+patches             ("wall_cylinder");
+pName               p;
+UName               U;
+rho                 rhoInf;
+
+log                 true; 
+CofR                (0 0 0);     
+rhoInf              1;
