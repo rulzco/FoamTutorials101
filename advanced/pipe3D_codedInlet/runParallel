@@ -1,0 +1,30 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/CleanFunctions      # Tutorial clean functions
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+cleanAuxiliary
+cleanTimeDirectories
+cleanPostProcessing
+
+restore0Dir
+
+runApplication decomposePar -allRegions
+
+touch case.foam
+
+runParallel $(getApplication)
+
+runApplication reconstructPar -allRegions
+
+rm -rf processor*
+
+# postProcess -func graphUniform -region dielectric1 -latestTime 
+# postProcess -func graphUniform -region dielectric2 -latestTime 
+# postProcess -func graphUniform -region air -latestTime
+# python3 plot.py
+
+# Output message
+echo
+echo Case ended

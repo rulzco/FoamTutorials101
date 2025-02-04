@@ -1,0 +1,222 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Which of the steps to run
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+
+geometry
+{
+    cylinder.stl
+    {
+        type triSurfaceMesh;
+        name cylinder;
+    }
+
+    // refinementBox
+    // {
+    //     type searchableBox;
+    //     min (-2.5 -2.5 -1);
+    //     max ( 4  2.5 1);
+    // }
+
+    // wakeBox
+    // {
+    //     type searchableBox;
+    //     min (-4 -4 -1);
+    //     max ( 25  4 1);
+    // }
+};
+
+
+
+// Settings for the castellatedMesh generation.
+castellatedMeshControls
+{
+
+    // Refinement parameters
+    maxLocalCells 100000;
+    maxGlobalCells 2000000;
+    minRefinementCells 10;
+    nCellsBetweenLevels 3;
+    resolveFeatureAngle 20;
+    locationInMesh (-1.75 -1.75 0.75);
+    allowFreeStandingZoneFaces true;
+
+    // Explicit feature edge refinement
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    features
+    (
+        // {
+        //     file "cylinder.eMesh";
+        //     level 4;
+        // }
+    );
+
+    // Surface based refinement
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+    refinementSurfaces
+    {
+        cylinder
+        {
+            // Surface-wise min and max refinement level
+            level (2 2);
+            
+            patchInfo
+            {
+                type        wall;
+            }
+            
+            // regions
+            // {
+                // suzanneEar
+                // {
+                    // level    (1 1);
+                    // patchInfo
+                    // {
+                        // type wall;
+                    // }
+                // }
+            // }
+        }
+
+    }
+
+    // Region-wise refinement
+    refinementRegions
+    {
+        // refinementBox
+        // {
+        //     mode    inside;
+        //     levels ((1E15 3));
+        // }
+        
+        // wakeBox
+        // {
+        //     mode    inside;
+        //     levels ((1E15 2));
+        // }
+    }
+
+
+}
+
+// Settings for the snapping.
+snapControls
+{
+    //- Number of patch smoothing iterations before finding correspondence
+    //  to surface
+    nSmoothPatch 3;
+    //- Relative distance for points to be attracted by surface feature point
+    //  or edge. True distance is this factor times local
+    //  maximum edge length.
+    tolerance 1.2;
+    //- Number of mesh displacement relaxation iterations.
+    nSolveIter 30;//150
+    //- Maximum number of snapping relaxation iterations. Should stop
+    //  before upon reaching a correct mesh.
+    nRelaxIter 5;
+
+    // Feature snapping
+        //- Number of feature edge snapping iterations.
+        //  Leave out altogether to disable.
+        nFeatureSnapIter 30;//5
+        //- Detect (geometric) features by sampling the surface
+        implicitFeatureSnap false;
+        //- Use castellatedMeshControls::features
+        explicitFeatureSnap true;
+        //- Detect features between multiple surfaces
+        multiRegionFeatureSnap false;
+}
+
+
+
+// Settings for the layer addition.
+addLayersControls
+{
+    // Are the thickness parameters below relative to the undistorted
+    // size of the refined cell outside layer (true) or absolute sizes (false).
+    relativeSizes true;
+
+    // Per final patch (so not geometry!) the layer information
+    layers
+    {
+        "cylinder*"
+        {
+            nSurfaceLayers 10;
+        }
+    }
+
+    expansionRatio 1.2;
+    finalLayerThickness 0.3;
+    // firstLayerThickness 0.3;
+    minThickness 0.1;
+    nGrow 0;
+
+    // Advanced settings
+
+    // When not to extrude surface. 0 is flat surface, 90 is when two faces
+    // are perpendicular
+    featureAngle 90;
+    // Advanced settings
+    nRelaxIter 4;
+    nSmoothSurfaceNormals 1;
+    nSmoothNormals 3;
+    nSmoothThickness 10;
+    maxFaceThicknessRatio 0.5;
+    maxThicknessToMedialRatio 0.3;
+    minMedialAxisAngle 90;
+    nBufferCellsNoExtrude 0;
+    nLayerIter 50;
+    nRelaxedIter 20;
+}
+
+meshQualityControls
+{
+    #include "meshQualityDict"
+
+    nSmoothScale 4;
+    //- Amount to scale back displacement at error points
+    errorReduction 0.75;
+    // Optional : some meshing phases allow usage of relaxed rules.
+    // See e.g. addLayersControls::nRelaxedIter.
+    relaxed
+    {
+        //- Maximum non-orthogonality allowed. Set to 180 to disable.
+        maxNonOrtho 75;
+    }
+}
+
+
+// Advanced
+
+// Write flags
+writeFlags
+(
+    scalarLevels    // write volScalarField with cellLevel for postprocessing
+    layerSets       // write cellSets, faceSets of faces in layer
+    layerFields     // write volScalarField for layer coverage
+);
+
+
+// Merge tolerance. Is fraction of overall bounding box of initial mesh.
+// Note: the write tolerance needs to be higher than this.
+mergeTolerance 1e-6;
+
+
+// ************************************************************************* //

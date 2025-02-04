@@ -1,0 +1,17 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/CleanFunctions      # Tutorial clean functions
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+
+cleanAuxiliary
+cleanTimeDirectories
+cleanPostProcessing
+
+restore0Dir
+# rm log*
+# rm -rf postProcessing
+# cp -a 0.org/. 0/
+
+runApplication pisoFoam
+
+touch case.foam

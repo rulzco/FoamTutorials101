@@ -1,0 +1,17 @@
+#! /bin/bash
+. /usr/lib/openfoam/openfoam2212/etc/bashrc
+
+cp -r 0.orig 0
+foamListTimes -rm
+
+blockMesh
+renumberMesh -overwrite
+
+
+foamJob SRFSimpleFoam
+
+touch case.foam
+
+echo
+echo Case running
+                 

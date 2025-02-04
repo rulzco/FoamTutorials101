@@ -1,0 +1,26 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+. ${WM_PROJECT_DIR:?}/bin/tools/CleanFunctions      # Tutorial clean functions
+#------------------------------------------------------------------------------
+
+restore0Dir
+
+rm log*
+
+runApplication surfaceFeatureExtract
+
+runApplication blockMesh
+
+runApplication snappyHexMesh -overwrite
+
+cleanSnappyFiles
+
+# extrudeMesh
+
+renumberMesh -overwrite
+
+touch case.foam
+
+echo Mesh created
+echo
