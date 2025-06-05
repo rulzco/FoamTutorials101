@@ -82,8 +82,8 @@ functions
         dragDir     (1 0 0); // cos AOA, sin AOA, 0 AOA in RAD
         pitchAxis   (0 0 1);
         magUInf     0.02; 
-        lRef        0.6;
-        Aref        0.16207;
+        lRef        0.3094; // D_h = 4 * Area/Perimeter
+        Aref        0.16207; 
     }
 
     forces
