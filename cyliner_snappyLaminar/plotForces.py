@@ -4,7 +4,7 @@ from scipy.fft import fft, fftfreq
 from scipy.fft import rfft, rfftfreq
 
 # Data for forces
-force_data = np.loadtxt('postProcessing/FO_forces/0/force.dat')
+force_data = np.loadtxt('postProcessing/forces/0/force.dat')
 time = force_data[:, 0]
 Fx = force_data[:, 1]
 Fy = force_data[:, 2]

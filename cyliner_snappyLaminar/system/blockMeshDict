@@ -1,0 +1,193 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+scale 1;
+
+radius 1.0;
+height 20.0;
+L1 25.0;
+L2 20.0;
+L3 40.0;
+
+hTop #eval "$height/2.0";
+hBot #eval "-1*$height/2.0";
+xMin #eval "-1*$L1*$radius";
+xMidLHS #eval "-1*$L2/2.0*$radius";
+xMidRHS #eval "$L2/2.0*$radius";
+xMax #eval "($L2+$L3)*$radius";
+radiPos #eval "$radius*sin(0.785)";//45 grad -> 0.785 rad
+radiNeg #eval "-1*$radiPos";
+negRadius #eval "-1*$radius";
+z0 -0.5;
+z1 0.5; 
+
+vertices
+(
+    // pre-block
+    ($xMin $hBot $z0) // 0
+    ($xMin $hTop $z0) // 1
+    ($xMidLHS $hBot $z0) // 2 
+    ($xMidLHS $hTop $z0) // 3
+
+    // cylinder blocks
+    ($radiNeg $radiNeg $z0) // 4
+    ($radiNeg $radiPos $z0) // 5
+    ($radiPos $radiNeg $z0) // 6
+    ($radiPos $radiPos $z0) // 7
+
+    ($xMidRHS $hBot $z0) // 8
+    ($xMidRHS $hTop $z0) // 9
+
+    ($xMax $hBot $z0) // 10
+    ($xMax $hTop $z0) // 11
+
+    //------------------
+    ($xMin $hBot $z1) // 12
+    ($xMin $hTop $z1) // 13
+    ($xMidLHS $hBot $z1) // 14 
+    ($xMidLHS $hTop $z1) // 15
+
+    // cylinder blocks
+    ($radiNeg $radiNeg $z1) // 16
+    ($radiNeg $radiPos $z1) // 17
+    ($radiPos $radiNeg $z1) // 18
+    ($radiPos $radiPos $z1) // 19
+
+    ($xMidRHS $hBot $z1) // 20
+    ($xMidRHS $hTop $z1) // 21
+
+    ($xMax $hBot $z1) // 22
+    ($xMax $hTop $z1) // 23
+);
+
+layering 30;
+invLayering #eval "1.0/$layering";
+// cells 80;
+
+blocks
+(
+    // pre-block
+    hex (0 2 3 1 12 14 15 13) (80 60 1) simpleGrading (1 1 1)
+
+    // obstacle blocks
+    hex (2 8 6 4 14 20 18 16) (60 60 1) //simpleGrading (1 1 1) // bottom
+    edgeGrading (1 1 1 1 $invLayering $invLayering $invLayering $invLayering 1 1 1 1)
+    hex (6 8 9 7 18 20 21 19) (60 60 1) //simpleGrading (1 1 1) // right
+    edgeGrading ($layering $layering $layering $layering 1 1 1 1 1 1 1 1)
+    hex (7 9 3 5 19 21 15 17) (60 60 1) //simpleGrading (1 1 1) // top
+    edgeGrading ($layering $layering $layering $layering 1 1 1 1 1 1 1 1)
+    hex (2 4 5 3 14 16 17 15) (60 60 1) //simpleGrading (1 1 1) // left
+    edgeGrading ($invLayering $invLayering $invLayering $invLayering 1 1 1 1 1 1 1 1)
+
+    // // post-block
+    hex (8 10 11 9 20 22 23 21) (180 60 1) simpleGrading (1 1 1)
+);
+
+edges
+(
+    arc 4 6 (0 $negRadius $z0)
+    arc 6 7 ($radius 0 $z0)
+    arc 7 5 (0 $radius $z0)
+    arc 5 4 ($negRadius 0 $z0)
+
+    arc 16 18 (0 $negRadius $z1)
+    arc 18 19 ($radius 0 $z1)
+    arc 19 17 (0 $radius $z1)
+    arc 17 16 ($negRadius 0 $z1)
+);
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 12 13 1)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (10 22 23 11)
+        );
+    }
+    wall_cylinder
+    {
+        type wall;
+        faces
+        (
+            (4 16 17 5)
+            (4 16 18 6)
+            (6 7 19 18)
+            (5 17 19 7)
+        );
+    }
+    top
+    {
+        type patch;
+        faces
+        (
+            (1 13 15 3)
+            (3 15 21 9)
+            (9 21 23 11)
+        );
+    }
+    bottom
+    {
+        type patch;
+        faces
+        (
+            (0 12 14 2)
+            (2 14 20 8)
+            (8 20 22 10)
+        );
+    }
+    back
+    {
+        type empty;
+        faces
+        (
+            (0 2 3 1)
+            (2 8 6 4)
+            (6 8 9 7)
+            (5 7 9 3)
+            (2 4 5 3)
+            (8 10 11 9)
+        );
+    }
+    front
+    {
+        type empty;
+        faces
+        (
+            (12 14 15 13)
+            (14 20 18 16)
+            (18 20 21 19)
+            (17 19 21 15)
+            (14 16 17 15)
+            (20 22 23 21)
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

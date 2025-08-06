@@ -1,0 +1,82 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     pisoFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         250;
+
+deltaT          0.025;
+
+writeControl    timeStep;
+
+writeInterval   80;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+
+functions
+{
+    // #includeFunc  yPlus	
+    // #includeFunc  wallShearStress
+    // #includeFunc  vorticity
+    #includeFunc  "FO_forces"
+
+    forceCoeffs
+    {
+        type                forceCoeffs;
+        libs  ( "libforces.so" );
+        writeControl       timeStep;
+        writeInterval      20;
+    
+        patches             ( "wall_cylinder" );
+        pName               p;
+        UName               U;
+        rho                 rhoInf;
+
+        log                 true;
+        
+        liftDir             (0 1 0);
+        dragDir             (1 0 0);
+        CofR                (0 0 0);
+        pitchAxis           (0 0 1);
+        
+        magUInf             1;
+        rhoInf              1;
+        lRef                1;
+        Aref                2;
+    }
+}
+
+
+// ************************************************************************* //
